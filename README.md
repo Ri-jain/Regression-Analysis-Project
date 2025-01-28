@@ -1,4 +1,8 @@
-# Regression-Analysis-Project
+# Retail Analytics-Project
+
+Description:
+Analyzing customer and transaction data from a large retailer of apparel and accessories with locations across the U.S. The company is interested in analyzing both profitability and customer satisfaction. For the current phase of the project, they've asked you to focus on their four store locations in and around the Boston metro area.
+
 
 
 - Data modeling.
