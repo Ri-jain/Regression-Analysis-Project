@@ -1,0 +1,931 @@
+
+""
+
+import pandas as pd
+import numpy as np
+
+# ### Storing the data files in appropriately named dataframes
+
+stores_df = pd.read_csv('stores.csv')
+sales_df = pd.read_excel('sales (1).xlsx', sheet_name='sales-data')
+customers_cdf = pd.read_excel('customers.xlsx')
+
+
+stores_df.head(10)
+sales_df.head(10)
+customers_cdf.head(10)
+
+# #### Observing the data types in each respective column for the customers data file
+
+customers_cdf.info()
+
+# # Customers data cleaning
+
+
+customers_cdf.shape
+
+# ### Observing number of unique values for every column
+for cols in customers_cdf.columns:
+    unique_values = customers_cdf[cols].unique()
+    print(f"Unique values in column '{cols}': {unique_values}")
+    print('\n====================================\n\n')
+
+
+# ### Checking for null values in the customers data file
+
+customers_cdf.isnull().sum()
+
+# ### Correcting discrepancies in  State column, correcting state names to their correct abbreviations
+
+
+customers_cdf['customer.state'] = customers_cdf['customer.state'].replace('Mass.', 'MA')
+
+customers_cdf['customer.state'] = customers_cdf['customer.state'].replace('Massachusetts', 'MA')
+
+customers_cdf['customer.state'] = customers_cdf['customer.state'].replace('Massachusets', 'MA')
+customers_cdf['customer.state'] = customers_cdf['customer.state'].replace('Mass', 'MA')
+customers_cdf['customer.state'] = customers_cdf['customer.state'].replace('Massachusetts ', 'MA')
+customers_cdf['customer.state'] = customers_cdf['customer.state'].replace('Conn.', 'CT')
+
+customers_cdf['customer.state'] = customers_cdf['customer.state'].replace('Connecticut', 'CT')
+
+# ### Dropping records with age zero since it is logically not viable 
+
+
+
+
+customers_cdf.drop(customers_cdf[customers_cdf['age'] == 0].index, inplace=True)
+
+print(customers_cdf[customers_cdf['age'] == 0])
+
+
+# ### Correcting Birthday Month from string (object in python) to Integer values
+
+
+
+customers_cdf['birthday.month'] = customers_cdf['birthday.month'].replace('October', 10)
+customers_cdf['birthday.month'] = customers_cdf['birthday.month'].replace('March', 3)
+
+
+
+
+customers_cdf['birthday.month'] = customers_cdf['birthday.month'].replace('Mar', 3)
+customers_cdf['birthday.month'] = customers_cdf['birthday.month'].replace('February', 2)
+customers_cdf['birthday.month'] = customers_cdf['birthday.month'].replace('Apr.', 4)
+customers_cdf['birthday.month'] = customers_cdf['birthday.month'].replace('Feb.', 2)
+customers_cdf['birthday.month'] = customers_cdf['birthday.month'].replace('April', 4)
+customers_cdf['birthday.month'] = customers_cdf['birthday.month'].replace('Nov.', 11)
+customers_cdf['birthday.month'] = customers_cdf['birthday.month'].replace('July', 7)
+customers_cdf['birthday.month'] = customers_cdf['birthday.month'].replace('Oct', 10)
+
+
+
+
+count_zero_month = (customers_cdf['birthday.month'] == 0).sum()
+print(f"Number of records with birthday month as zero: {count_zero_month}")
+
+
+
+
+customers_cdf['birthday.month'] = customers_cdf['birthday.month'].astype(str)
+
+
+# ### Correcting customer.id and customer.state to string (object in python)
+
+
+
+customers_cdf['customer.id'] = customers_cdf['customer.id'].astype(str)
+customers_cdf['customer.state'] = customers_cdf['customer.state'].astype(str)
+
+
+# ### Checking Null values in instore experience column and selection
+
+
+
+
+# Filter rows where 'in.store.exp' is NaN
+null_rows = customers_cdf[customers_cdf['in.store.exp'].isna()]
+
+# Check if corresponding 'selection' values are also NaN
+result = null_rows['selection'].isna().all()
+
+# Output the result
+if result:
+    print("All rows where 'in.store.exp' is null also have 'selection' as null.")
+else:
+    print("Some rows where 'in.store.exp' is null do not have 'selection' as null.")
+
+
+
+customers_cdf['in.store.exp'] = customers_cdf['in.store.exp'].fillna('Blank (missing data)')
+customers_cdf['selection'] = customers_cdf['selection'].fillna('Blank (missing data)')
+
+
+# ### Checking all the unique values for every column in the customers data set once again
+
+
+
+
+for cols in customers_cdf.columns:
+    unique_values = customers_cdf[cols].unique()
+    print(f"Unique values in column '{cols}': {unique_values}")
+    print('\n====================================\n\n')
+
+
+
+customers_cdf.info()
+
+customers_cdf.isnull().sum()
+
+
+duplicate_count = customers_cdf.duplicated().sum()
+print(f"Total duplicate records: {duplicate_count}")
+
+# ### ----------------------------------------cleaning done for customers.xlsx----------------------------------------
+
+
+# # Task 3. Data manipulation and wrangling
+
+# ## Sales data cleaning 
+
+# #### Observing data type for each column
+
+
+
+
+sales_df.info()
+
+
+# #### Checking for the null values
+
+
+
+sales_df.isnull().sum()
+
+
+# ##### Filling the null values with 'NA' as mentioned in the instructions
+
+
+
+sales_df['customer.id'] = sales_df['customer.id'].fillna('NA')
+
+
+
+
+
+sales_df.head(10)
+
+
+# #### Null values are to be kept since they specify transactions carried out by non-loyalty member
+
+# #### Checking for all the unique values per column
+
+
+
+
+for cols in sales_df.columns:
+    unique_values = sales_df[cols].unique()
+    print(f"Unique values in column '{cols}': {unique_values}")
+    print('\n====================================\n\n')
+
+
+# #### Correcting the data type for transaction number and sku based on the dictionary
+
+
+
+
+sales_df['tran.number'] = sales_df['tran.number'].astype(str)
+sales_df['sku'] = sales_df['sku'].astype(str)
+
+
+
+
+
+sales_df['category'] = sales_df['category'].astype(str)
+
+
+# ##### Converting loyalty member to a binary variable 
+
+
+
+sales_df['loyalty.member'] = sales_df['loyalty.member'].astype(int)
+
+
+
+
+sales_df['customer.id'] = sales_df['customer.id'].astype(str)
+
+
+# ### ----------------------------------------cleaning done for sales data----------------------------------------
+
+# # Cleaning Stores Data File
+
+
+
+
+stores_df.info()
+
+
+
+
+stores_df
+
+
+# #### Dropping the unnamed columns
+
+
+
+stores_df = stores_df.drop(columns=['Unnamed: 5', 'Unnamed: 6', 'Unnamed: 7'])
+
+
+
+
+stores_df
+
+
+# #### Joining the customer-level transaction data with the cleaned version of our customers data to create a 'customer_purchases' dataframe and 
+
+# #### Also rearranging the columns so as to make customer.id as the first column
+
+
+
+
+customer_purchases = pd.merge(sales_df, customers_cdf, on='customer.id', how='inner')
+
+
+
+
+
+# Reorder columns with 'customer.id' first
+customer_purchases = customer_purchases[
+    ['customer.id', 'store', 'sale.date', 'tran.number', 'sku', 'category', 'qty', 
+     'unit.cost', 'ext.cost', 'unit.original.retail', 'sale.amount', 'customer.state', 'age', 'birthday.month', 
+     'years.as.member', 'in.store.exp', 'selection']
+]
+
+# Display the updated DataFrame
+customer_purchases.head(10)
+
+
+# #### Saving the data in .csv format
+customer_purchases.to_csv('customer_purchases.csv', index=False)
+
+
+# # Task 4. Summary statistics and visualization 
+
+# # Calculating measures of central tendency for sales data
+
+
+
+
+# Compute statistics for 'sale.amount'
+mean_sales = sales_df['sale.amount'].mean()
+median_sales = sales_df['sale.amount'].median()
+std_dev_sales = sales_df['sale.amount'].std()
+skewness_sales = sales_df['sale.amount'].skew()
+
+# Print results
+print(f"Mean: {mean_sales}")
+print(f"Median: {median_sales}")
+print(f"Standard Deviation: {std_dev_sales}")
+print(f"Skewness Coefficient: {skewness_sales}")
+
+
+# ### (a) Boxplots for all sales records in the data
+
+
+
+
+import matplotlib.pyplot as plt
+
+# Boxplot for all sales records
+plt.figure(figsize=(8, 6))
+plt.boxplot(sales_df['sale.amount'], vert=False)
+plt.title('Horizontal Boxplot of Sale Amount - All Sales')
+plt.xlabel('Sale Amount')
+plt.show()
+
+
+# ### (b) Boxplots separately for each product category.
+
+
+
+# Group sale.amount by product category
+categories = sales_df['category'].unique()
+grouped_data = [sales_df[sales_df['category'] == category]['sale.amount'] for category in categories]
+
+# Boxplot for sale amount by product category
+plt.figure(figsize=(10, 6))
+plt.boxplot(grouped_data, vert=False, labels=categories)
+plt.title('Horizontal Boxplot of Sale Amount by Product Category')
+plt.xlabel('Sale Amount')
+plt.ylabel('Product Category')
+plt.show()
+
+
+# #### Blended gross margin
+
+
+
+
+# Calculate blended gross margin
+blended_gross_margin = sales_df.groupby('category').apply(
+    lambda x: (x['sale.amount'].sum() - x['ext.cost'].sum()) / x['sale.amount'].sum()
+).reset_index(name='blended_gross_margin')
+
+# Display results
+print(blended_gross_margin)
+
+
+# ## Identifying outliers
+
+# #### Using Boxplots
+
+
+
+
+import matplotlib.pyplot as plt
+
+# Boxplot for all sales records
+plt.figure(figsize=(8, 6))
+boxplot = plt.boxplot(sales_df['sale.amount'], vert=False, flierprops=dict(marker='o', color='r', markersize=5))
+plt.title('Horizontal Boxplot of Sale Amount - All Sales')
+plt.xlabel('Sale Amount')
+plt.show()
+
+# Extract outlier values
+outliers = boxplot['fliers'][0].get_xdata()  # Use get_xdata() for horizontal boxplots
+
+# Sort the outliers
+sorted_outliers = sorted(outliers)
+print(f"Sorted Outliers in Sale Amount (All Sales): {sorted_outliers}")
+
+
+
+
+
+# Group sale.amount by product category
+categories = sales_df['category'].unique()
+grouped_data = [sales_df[sales_df['category'] == category]['sale.amount'] for category in categories]
+
+# Boxplot for sale amount by product category and identify outliers
+plt.figure(figsize=(10, 6))
+boxplot = plt.boxplot(grouped_data, vert=False, labels=categories, patch_artist=True)
+plt.title('Horizontal Boxplot of Sale Amount by Product Category')
+plt.xlabel('Sale Amount')
+plt.ylabel('Product Category')
+plt.show()
+
+# Extract outliers for each product category
+category_outliers = {}
+for i, category in enumerate(categories):
+    category_outliers[category] = boxplot['fliers'][i].get_xdata()
+
+# Print outliers by category
+for category, outliers in category_outliers.items():
+    print(f"Outliers in Sale Amount for {category}: {outliers}")
+
+
+# #### Using Z-score
+
+
+
+
+from scipy.stats import zscore
+# Calculate z-scores for 'sale.amount'
+sales_df['z_score'] = zscore(sales_df['sale.amount'])
+
+# Identify outliers using z-score threshold (e.g., |z| > 3)
+outliers = sales_df[sales_df['z_score'].abs() > 3]
+
+# Print the outliers
+print(f"Outliers identified using z-score (|z| > 3):")
+print(outliers[['sale.amount', 'z_score']])
+
+# Drop z-score column after analysis if no longer needed
+sales_df.drop(columns=['z_score'], inplace=True)
+
+
+# ### Our recommendation for handling the outliers
+
+# - We believe the outlier 693 in the sales data skews the distribution to the right, so we decided to replace the value with the mean of the sales excluding 693.
+# - The other outliers are relevant, and since their values are not excessively large, we have decided to retain them.
+
+
+
+# Calculate the mean of the sale.amount column excluding the outlier (693)
+mean_without_outlier = sales_df[sales_df['sale.amount'] != 693]['sale.amount'].mean()
+
+# Replace the outlier (693) with the calculated mean
+sales_df['sale.amount'] = sales_df['sale.amount'].replace(693, mean_without_outlier)
+
+# Verify if the replacement is successful
+sales_df[sales_df['sale.amount'] == mean_without_outlier]
+
+
+# #### Updated box plot
+
+
+
+
+import matplotlib.pyplot as plt
+
+# Boxplot for all sales records
+plt.figure(figsize=(8, 6))
+boxplot = plt.boxplot(sales_df['sale.amount'], vert=False, flierprops=dict(marker='o', color='r', markersize=5))
+plt.title('Horizontal Boxplot of Sale Amount - All Sales')
+plt.xlabel('Sale Amount')
+plt.show()
+
+
+# # Part 2
+# # Task 5. Hypothesis testing
+
+# ## Hypothesis : The Gross Margin Percentage(GM%) in Quarter 1 is less than the average GM% in the other three quarters of the year.
+
+# ### Statement of the Null (H₀)
+# **The mean GM% for Quarter 1 (Q1) is greater than or equal to the mean GM% for the other three quarters.**
+# 
+# **Null Hypothesis (H₀)**: 
+# \[
+# H0: μ1 >= μ234
+# \]
+# 
+# **Alternative Hypothesis (Hₐ)**:
+# \[
+# Ha: μ1 < μ234
+# \]
+# 
+# - **Where**:
+#   - **\(μ1)**: Mean Gross Margin Percentage for Quarter 1.
+#   - **\(μ234)**: Mean Gross Margin Percentage for Quarters 2, 3 and 4.
+# 
+# #### Statement of the Alternative (Hₐ)
+# **The mean GM% for Quarter 1 (Q1) is less than the mean GM% for the other three quarters.**
+# 
+# This hypothesis is testing if Quarter 1 has a significantly **Lower mean GM%** compared to Quarter 2, 3 and 4. Since we are testing whether Q1 has a lower value, this is a **Left-tailed test**.
+# 
+
+# #### Calculating GM$ and GM% for all the 4 Quarters
+
+
+
+# Data Transformation
+# Convert 'sale.date' to datetime and extract quarter
+sales_df['sale.date'] = pd.to_datetime(sales_df['sale.date'])
+sales_df['quarter'] = sales_df['sale.date'].dt.quarter
+
+# Calculate Gross Margin Dollars (GM$)
+sales_df['GM$'] = sales_df['sale.amount'] - sales_df['ext.cost']
+
+# Calculate Gross Margin Percentage (GM%)
+sales_df['GM%'] = (sales_df['GM$'] / sales_df['sale.amount']) * 100
+
+# Aggregation
+# Group GM$ and GM% by quarter to observe seasonal trends
+quarterly_gm_summary = sales_df.groupby('quarter').agg(
+    total_GM_dollars=('GM$', 'sum'),
+    average_GM_percentage=('GM%', 'mean')
+).reset_index()
+
+# Output
+print(quarterly_gm_summary.to_string(index=False))
+
+
+# #### Saving the cleaned sales dataset as updated_sales CSV file
+
+
+
+
+# Save the cleaned sales dataset to a new CSV file
+updated_sales_path = 'updated_sales.csv'
+sales_df.to_csv(updated_sales_path, index=False)
+
+# Optional: Print a confirmation message
+print(f"The cleaned sales data has been saved to {updated_sales_path}")
+
+
+# #### Create a new column 'is_q1' that indicates whether the transaction occurred in Q1 (Quarter 1)
+#  - The lambda function checks the 'quarter' column:
+# - Assigns 1 if the value is 1 (indicating Q1).
+# - Assigns 0 otherwise.
+# sales_df['is_q1'] = sales_df['quarter'].apply(lambda x: 1 if x == 1 else 0)
+# 
+# #### Store the updated dataset into a new DataFrame named 'updated_sales_df'
+# - This ensures the original 'sales_df' remains unchanged.
+# updated_sales_df = sales_df.copy()
+# 
+
+
+
+
+# Create a new column 'is_q1' with 1 if quarter is 1, otherwise 0
+sales_df['is_q1'] = sales_df['quarter'].apply(lambda x: 1 if x == 1 else 0)
+
+# Store the updated dataset into a new DataFrame
+updated_sales_df = sales_df.copy()
+
+
+# #### Calculate the Gross Margin Percentage (GM%) for each transaction and add it to the DataFrame
+# - Formula: ((sale.amount - ext.cost) / sale.amount) * 100
+# - 'sale.amount': Total revenue from the sale.
+# - 'ext.cost': Total cost associated with the sale.
+# - This calculation expresses the gross margin as a percentage of the sale amount.
+# updated_sales_df['GM%'] = ((updated_sales_df['sale.amount'] - updated_sales_df['ext.cost']) / updated_sales_df['sale.amount']) * 100
+# 
+# #### Display the first few rows of the updated DataFrame to verify that the 'GM%' column was added correctly
+# updated_sales_df.head()
+
+
+
+
+# Calculate Gross Margin Percentage (GM%) and add it to the DataFrame
+updated_sales_df['GM%'] = ((updated_sales_df['sale.amount'] - updated_sales_df['ext.cost']) / updated_sales_df['sale.amount']) * 100
+
+# Display the first few rows to verify the addition
+updated_sales_df.head()
+
+
+# #### Import the necessary libraries for regression analysis
+# - LinearRegression: To build and train the linear regression model.
+# - r2_score: To calculate the R-squared value for the model.
+# - mean_squared_error: To compute the mean squared error (MSE) of predictions.
+# from sklearn.linear_model import LinearRegression
+# from sklearn.metrics import r2_score, mean_squared_error
+# 
+# #### Define the independent variable (X) and the dependent variable (y)
+# - X: The feature used for prediction ('is_q1' column indicating whether the sale occurred in Q1).
+# - y: The target variable ('GM%' column representing the Gross Margin Percentage).
+# X = updated_sales_df[['is_q1']]
+# y = updated_sales_df['GM%']
+# 
+# #### Create a Linear Regression model
+# - Initializes the model that will fit a straight line to the data.
+# model = LinearRegression()
+# 
+# #### Fit the model to the entire dataset
+# - The model learns the relationship between X (independent variable) and y (dependent variable).
+# model.fit(X, y)
+# 
+# #### Predict the values using the entire dataset
+# - y_pred: The predicted GM% values based on the fitted model and the 'is_q1' feature.
+# y_pred = model.predict(X)
+# 
+# #### Calculate R-squared (Coefficient of Determination)
+# - R-squared measures the proportion of variance in 'GM%' explained by 'is_q1'.
+# r2 = r2_score(y, y_pred)
+# 
+# #### Calculate Adjusted R-squared
+# - Adjusted R-squared accounts for the number of predictors in the model.
+# - Formula: 1 - (1 - r2) * (n - 1) / (n - p - 1), where:
+# ####   - n: Number of observations.
+# ####   - p: Number of predictors (columns in X).
+# n = len(y)  # Number of observations
+# p = X.shape[1] # Number of predictors
+# adjusted_r2 = 1 - (1 - r2) * (n - 1) / (n - p - 1)
+# 
+# #### Calculate Mean Squared Error (MSE)
+# - MSE quantifies the average squared difference between actual and predicted GM%.
+# mse = mean_squared_error(y, y_pred)
+# 
+# #### Display the model coefficients
+# - Intercept: The value of 'GM%' when 'is_q1' is 0.
+# - Coefficient for 'is_q1': The change in 'GM%' when 'is_q1' changes by 1 (i.e., Q1 vs. non-Q1).
+# print(f"Intercept: {model.intercept_}")
+# print(f"Coefficient for 'is_q1': {model.coef_[0]}")
+# 
+# #### Display R-squared and Adjusted R-squared
+# - R-squared: How well the model explains the variance in 'GM%'.
+# - Adjusted R-squared: R-squared adjusted for the number of predictors in the model.
+# print(f"R-squared: {r2}")
+# print(f"Adjusted R-squared: {adjusted_r2}")
+# 
+# #### Display Mean Squared Error (MSE)
+# - Provides an overall measure of prediction error in terms of GM%.
+# print(f"Mean Squared Error: {mse}")
+# 
+
+
+
+
+# Import necessary libraries for regression analysis
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score, mean_squared_error
+# Define the independent variable (X) and the dependent variable (y)
+X = updated_sales_df[['is_q1']]
+y = updated_sales_df['GM%']
+
+# Create a Linear Regression model
+model = LinearRegression()
+
+# Fit the model to the entire dataset
+model.fit(X, y)
+
+# Predict the values using the entire dataset
+y_pred = model.predict(X)
+
+# Calculate R-squared
+r2 = r2_score(y, y_pred)
+
+# Calculate Adjusted R-squared
+n = len(y)  # Number of observations
+p = X.shape[1]  # Number of predictors
+adjusted_r2 = 1 - (1 - r2) * (n - 1) / (n - p - 1)
+
+# Calculate measures of variation (Mean Squared Error)
+mse = mean_squared_error(y, y_pred)
+
+# Display the model coefficients
+print(f"Intercept: {model.intercept_}")
+print(f"Coefficient for 'is_q1': {model.coef_[0]}")
+
+# Display R-squared and Adjusted R-squared
+print(f"R-squared: {r2}")
+print(f"Adjusted R-squared: {adjusted_r2}")
+
+# Display Mean Squared Error
+print(f"Mean Squared Error: {mse}")
+
+
+# #### Import necessary libraries for regression analysis
+# import statsmodels.api as sm
+# 
+# #### Define the independent variable (X) and the dependent variable (y)
+# - X: Independent variable (feature) containing the 'is_q1' column, indicating if the transaction occurred in Q1.
+# - y: Dependent variable (target) containing 'GM%' values, representing the gross margin percentage.
+# X = updated_sales_df[['is_q1']]
+# y = updated_sales_df['GM%']
+# 
+# #### Add a constant to the model
+# - Statsmodels requires an intercept term for regression analysis, added using `add_constant`.
+# X = sm.add_constant(X)
+# 
+# #### Create the OLS (Ordinary Least Squares) model and fit it
+# - OLS is a method for estimating the parameters of a linear regression model.
+# model = sm.OLS(y, X).fit()
+# 
+# #### Get the summary of the regression analysis
+# - Provides detailed statistics about the regression model, including coefficients, R-squared, and p-values.
+# summary = model.summary()
+# print(summary)
+# 
+# #### Extract key statistics from the fitted model
+# - R-squared: Proportion of variance in 'GM%' explained by 'is_q1'.
+# - p_value: Significance level of 'is_q1' in predicting 'GM%'.
+# - t_stat: t-statistic for 'is_q1', used to test the hypothesis about the coefficient.
+# - conf_int: 95% confidence interval for the 'is_q1' coefficient.
+# r_squared = model.rsquared
+# p_value = model.pvalues['is_q1']
+# t_stat = model.tvalues['is_q1']
+# conf_int = model.conf_int().loc['is_q1']
+# 
+# #### Display key statistics
+# print(f"R-squared: {r_squared}")
+# print(f"t-statistic for 'is_q1': {t_stat}")
+# print(f"P-value for 'is_q1': {p_value}")
+# print(f"95% Confidence Interval for 'is_q1': {conf_int[0]}, {conf_int[1]}")
+# 
+# #### Final statement about significance based on hypothesis testing
+# - Null Hypothesis: The coefficient for 'is_q1' is zero (no effect on GM%).
+# - Alternate Hypothesis: The coefficient for 'is_q1' is not zero (effect on GM%).
+# alpha = 0.05  # Significance level (5%)
+# if p_value < alpha:
+#     print("The p-value is less than the significance level, which means we reject the null hypothesis. "
+#           "The mean GM% for Quarter 1 is significantly lower compared to the mean GM% for Quarters 2, 3, and 4.")
+# else:
+#     print("The p-value is greater than the significance level, which means we fail to reject the null hypothesis. "
+#           "The mean GM% for Quarter 1 is not significantly lower compared to the mean GM% for Quarters 2, 3, and 4.")
+# 
+
+
+
+# Import necessary libraries for regression analysis
+import statsmodels.api as sm
+
+# Define the independent variable (X) and the dependent variable (y)
+X = updated_sales_df[['is_q1']]
+y = updated_sales_df['GM%']
+
+# Add a constant to the model (required for statsmodels to include an intercept)
+X = sm.add_constant(X)
+
+# Create the OLS (Ordinary Least Squares) model and fit it
+model = sm.OLS(y, X).fit()
+
+# Get the summary of the regression analysis
+summary = model.summary()
+print(summary)
+
+# Extract key statistics
+r_squared = model.rsquared
+p_value = model.pvalues['is_q1']
+t_stat = model.tvalues['is_q1']
+conf_int = model.conf_int().loc['is_q1']
+
+# Display key statistics
+print(f"R-squared: {r_squared}")
+print(f"t-statistic for 'is_q1': {t_stat}")
+print(f"P-value for 'is_q1': {p_value}")
+print(f"95% Confidence Interval for 'is_q1': {conf_int[0]}, {conf_int[1]}")
+
+# Final statement about significance based on new hypothesis
+alpha = 0.05  # Significance level (5%)
+if p_value < alpha:
+    print("The p-value is less than the significance level, which means we reject the null hypothesis. The mean GM% for Quarter 1 is significantly lower compared to the mean GM% for Quarters 2, 3, and 4.")
+else:
+    print("The p-value is greater than the significance level, which means we fail to reject the null hypothesis. The mean GM% for Quarter 1 is not significantly lower compared to the mean GM% for Quarters 2, 3, and 4.")
+
+
+# ### Conclusion 
+# - The p-value is less than the significance level, which means we reject the null hypothesis. 
+# - **The mean GM% for Quarter 1 is less than the mean GM% for Quarters 2, 3, and 4.**
+
+# # Task 6. Regression Analysis
+
+
+
+
+# Create dummy variables for 'price.category'
+price_dummies = pd.get_dummies(sales_df['price.category'], prefix='price_category', drop_first=True)
+# Concatenate the dummy variables with the original DataFrame
+sales_df = pd.concat([sales_df, price_dummies], axis=1)
+# Display the updated DataFrame
+sales_df.info()
+
+
+
+
+
+
+# Create dummy variables for the 'category' column
+category_dummies = pd.get_dummies(sales_df['category'], prefix='Category', drop_first=True)
+
+# Concatenate the dummy variables with the original DataFrame
+sales_df = pd.concat([sales_df, category_dummies], axis=1)
+
+# Display the updated DataFrame
+sales_df.head()
+
+
+
+
+
+updated_sales_path = 'updated_sales2.csv'
+sales_df.to_csv(updated_sales_path, index=False)
+
+
+
+
+# Create a new column 'is_q2' with 1 if quarter is 2, otherwise 0
+sales_df['is_q2'] = sales_df['quarter'].apply(lambda x: 1 if x == 2 else 0)
+sales_df['is_q3'] = sales_df['quarter'].apply(lambda x: 1 if x == 3 else 0)
+sales_df.head()
+
+
+
+# Select independent variables
+X = sales_df[['price_category_Full Price', 'price_category_Markdown', 
+              'Category_Childrens', 'Category_Footwear', 'Category_Gifts & Lifestyle',
+              "Category_Men's Apparel", "Category_Women's Apparel", 
+              'qty', 'loyalty.member', 'is_q1', 'is_q2', 'is_q3']]
+
+# Select dependent variable
+y = sales_df['gross.margin']
+
+# Ensure all columns in X are numeric
+X = X.apply(pd.to_numeric, errors='coerce')
+
+# Ensure y is numeric
+y = pd.to_numeric(y, errors='coerce')
+
+# Check for missing values and handle them
+X = X.fillna(0)
+y = y.fillna(0)
+
+# Check for alignment of rows between X and y
+X, y = X.align(y, join='inner', axis=0)
+
+# Add a constant to X (for the intercept)
+X = sm.add_constant(X)
+
+# Debugging: Ensure all data is numeric and aligned
+print("X types:\n", X.dtypes)
+print("y type:\n", y.dtypes)
+print("X shape:", X.shape)
+print("y shape:", y.shape)
+
+# Fit the regression model
+model = sm.OLS(y, X).fit()
+
+# Display the summary of the regression model
+print(model.summary())
+
+# ## Regression Equation for Gross Margin
+# 
+# The regression equation is as follows:
+# 
+# $$
+# \text{Gross Margin} = -0.017 (\text{Intercept}) + 0.713 \cdot \text{Full Price} + 0.687 \cdot \text{Markdown} - 0.078 \cdot \text{Category: Children’s} + 0.030 \cdot \text{Category: Footwear} - 0.123 \cdot \text{Category: Gifts \& Lifestyle} + 0.040 \cdot \text{Category: Men’s Apparel} - 0.019 \cdot \text{Category: Women’s Apparel} + 0.033 \cdot \text{Quantity (Qty)} - 0.014 \cdot \text{Loyalty Member} - 0.239 \cdot \text{Is Q1}
+# $$
+# 
+# #### Explanation of Terms:
+# 1. **Intercept (-0.017)**:
+#    - Baseline gross margin when all variables are at their default (reference) state.
+# 
+# 2. **Price Category Variables**:
+#    - **Full Price (0.713)**: Gross margin increases by 0.713 units when a product is sold at full price.
+#    - **Markdown (0.687)**: Gross margin increases by 0.687 units when a product is sold at markdown prices.
+#    - **Clearance** (Baseline): The omitted category; its impact is absorbed in the intercept.
+# 
+# 3. **Product Categories**:
+#    - **Children’s (-0.078)**: Selling children’s items reduces gross margin by 0.078 units.
+#    - **Footwear (0.030)**: Selling footwear increases gross margin by 0.030 units.
+#    - **Gifts & Lifestyle (-0.123)**: Selling gifts and lifestyle items reduces gross margin by 0.123 units.
+#    - **Men’s Apparel (0.040)**: Selling men’s apparel increases gross margin by 0.040 units.
+#    - **Women’s Apparel (-0.019)**: Minor negative impact on gross margin.
+# 
+# 4. **Other Variables**:
+#    - **Qty (0.033)**: Each additional unit sold increases gross margin by 0.033 units.
+#    - **Loyalty Member (-0.014)**: Gross margin decreases by 0.014 units for transactions involving loyalty members.
+#    - **Is Q1 (-0.239)**: Gross margin is reduced by 0.239 units during Q1.
+# 
+
+# # Interpretable Results for Gross Margin Impact
+# 
+# Based on the regression output:
+# 
+# ---
+# ## **Most Positive Impact**
+# 1. **`price_category_Full Price` (Coefficient: 0.713)**:
+#    - **Impact**: Selling at full price has the most substantial positive effect on gross margin.
+#    - **Reason**: Full-price sales avoid markdowns and discounts, directly maximizing profitability.
+# 
+# 2. **`price_category_Markdown` (Coefficient: 0.687)**:
+#    - **Impact**: Markdown sales still contribute positively to gross margin but slightly less than full-price sales.
+#    - **Reason**: While markdowns may increase sales volume, they reduce the per-unit profit.
+# 
+# 3. **`Category_Men's Apparel` (Coefficient: 0.040)**:
+#    - **Impact**: Selling men's apparel slightly improves gross margin.
+#    - **Reason**: Likely due to favorable pricing or lower cost of goods in this category.
+# 
+# 4. **`Category_Footwear` (Coefficient: 0.030)**:
+#    - **Impact**: Footwear has a small positive effect on gross margin.
+#    - **Reason**: This could be due to consistent demand or higher markups in this category.
+# 
+# ---
+# 
+# ## **Most Negative Impact**
+# 1. **`is_q1` (Coefficient: -0.239)**:
+#    - **Impact**: Q1 is associated with the largest negative impact on gross margin.
+#    - **Reason**: This could be due to post-holiday sales, discounts, or inventory clearance.
+# 
+# 2. **`Category_Gifts & Lifestyle` (Coefficient: -0.123)**:
+#    - **Impact**: Selling gifts and lifestyle items significantly reduces gross margin.
+#    - **Reason**: These products might have lower markups or are more frequently discounted.
+# 
+# 3. **`Category_Childrens` (Coefficient: -0.078)**:
+#    - **Impact**: Children's items negatively affect gross margin, though the impact is smaller than gifts and lifestyle.
+#    - **Reason**: Children's products might be sold at lower margins to maintain competitiveness.
+# 
+# 4. **`loyalty.member` (Coefficient: -0.014)**:
+#    - **Impact**: Being a loyalty member slightly reduces gross margin.
+#    - **Reason**: Loyalty programs often include discounts or perks that reduce profitability.
+# 
+# ---
+# 
+# ## **Neutral/Insignificant Impact**
+# 1. **`qty` (Coefficient: 0.033, p = 0.267)**:
+#    - **Impact**: Quantity sold does not significantly affect gross margin.
+#    - **Reason**: Margins may be relatively consistent regardless of quantity sold.
+# 
+# 2. **`Category_Women's Apparel` (Coefficient: -0.019, p = 0.081)**:
+#    - **Impact**: The effect of women's apparel is minor and not statistically significant.
+#    - **Reason**: This suggests women's apparel gross margins are similar to the baseline.
+# 
+# ---
+# 
+# ## **Key Takeaways**
+# 1. **Focus on Full-Price Sales**: Maximizing full-price sales is crucial for improving gross margins.
+# 2. **Seasonality Matters**: Q1 has a significant negative impact on gross margin, likely due to promotional activities.
+# 3. **Product Mix Optimization**: Avoid overemphasis on low-margin categories (e.g., Gifts & Lifestyle, Childrens) and focus more on high-margin categories like Men’s Apparel and Footwear.
+# 4. **Loyalty Program Review**: Loyalty programs might need a review to ensure they drive volume without disproportionately affecting margins.
+# 
+# ---
+
+# #### Strong Predictors:
+# 
+# - price_category_Full Price and price_category_Markdown are the most significant drivers of gross margin, with full-price sales yielding the highest margin.
+# - Categories like Childrens and Gifts & Lifestyle negatively affect gross margin, while Men's Apparel and Footwear have minor positive contributions.
+# 
+# #### Statistically Insignificant Variables:
+# - qty and Category_Women's Apparel do not show a strong enough relationship to gross margin to be considered impactful in this model.
+# 
+# #### Seasonality:
+# - Q1 (is_q1) negatively affects gross margin significantly, possibly due to promotions or post-holiday sales. No specific insights can be drawn for Q2 or Q3 because their dummy variables are missing from the analysis.
+# 
+# #### Potential Multicollinearity:
+# - The warning about a singular design matrix and eigenvalues suggests multicollinearity issues. Some predictors may be highly correlated, which could skew coefficients and weaken interpretability.
+# 
+
+# # -------------------------------------------------------------------------
+
