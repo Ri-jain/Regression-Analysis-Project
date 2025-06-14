@@ -1,0 +1,15 @@
+## 📊 Visual Highlights
+
+### 🧾 Blended Gross Margin by Category
+
+This analysis highlights gross margin performance across product categories, aiding pricing and bundling strategies.
+
+![Blended Gross Margin Table & Boxplots](visualizations/690a99c2-5da9-460f-92c4-5d4481e1db3a.png)
+
+---
+
+### 📉 Monthly Seasonality & Promotions Strategy
+
+February and January showed the lowest gross margins, confirming the seasonal impact and guiding promotional planning during low-performing months.
+
+![Monthly Impact on Gross Margins](visualizations/3efc02d4-fbbd-4f29-bc60-5c53b771692e.png)
