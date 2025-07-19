@@ -1,6 +1,6 @@
 # Retail Analytics Project | Apparel & Accessories Retailer
 
- **Focus:** Boston Metro Area | 🗓️ Timeline: Spring 2025  
+ **Focus:** Boston Metro Area | Timeline: Spring 2025  
  **Tools Used:** Python · Excel · Tableau · Scikit-learn · Matplotlib · SciPy  
  **Files Included:** Cleaned customer data, sales records, stores metadata, entity-relationship diagram, regression models, statistical analysis
 
