@@ -32,24 +32,18 @@ This project analyzes customer and transaction data from a U.S.-based apparel & 
 ###  4. Visualization & Descriptive Stats
 - Calculated mean, median, std dev, and skewness of sale amounts.
 - Created **boxplots** to explore distribution by product category and to identify outliers.
-- Computed **blended gross margin** per category:
-  
-  \[
-  \text{GM\%} = \frac{\sum(\text{sale.amount} - \text{ext.cost})}{\sum(\text{sale.amount})}
-  \]
-
 - Recommended handling methods for outliers (e.g., retention, transformation, or exclusion based on context).
 
 ---
 
-## 📈 Part 2: Inference & Predictive Modeling
+##  Part 2: Inference & Predictive Modeling
 
-### ✅ Hypothesis Testing
+###  Hypothesis Testing
 - **Hypothesis:** “The mean gross margin percentage (GM%) differs significantly across product categories.”
 - Conducted **ANOVA test** → Statistically significant differences found across categories.
 - **Business Implication:** Promotions should be tailored by category to avoid over-discounting profitable lines.
 
-### 🔍 Regression Analysis
+###  Regression Analysis
 - Built a **multiple linear regression model** to predict `gross_margin` using:
   - `product_category`, `price_category`, `store_id`, `sale.amount`, `month`
 - Achieved **R² ≈ 0.18**, offering predictive utility and interpretability.
@@ -59,7 +53,7 @@ This project analyzes customer and transaction data from a U.S.-based apparel & 
 
 ---
 
-## 📊 Tableau Dashboard (Coming Soon)
+## Tableau Dashboard (Coming Soon)
 Will include:
 - Store-wise gross margin trend
 - Category-level profitability
