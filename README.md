@@ -1,35 +1,35 @@
-# 🛍️ Retail Analytics Project | Apparel & Accessories Retailer
+# Retail Analytics Project | Apparel & Accessories Retailer
 
-📍 **Focus:** Boston Metro Area | 🗓️ Timeline: Spring 2025  
-📊 **Tools Used:** Python · Excel · Tableau · Scikit-learn · Matplotlib · SciPy  
-📁 **Files Included:** Cleaned customer data, sales records, stores metadata, entity-relationship diagram, regression models, statistical analysis
+ **Focus:** Boston Metro Area | 🗓️ Timeline: Spring 2025  
+ **Tools Used:** Python · Excel · Tableau · Scikit-learn · Matplotlib · SciPy  
+ **Files Included:** Cleaned customer data, sales records, stores metadata, entity-relationship diagram, regression models, statistical analysis
 
 ---
 
-## 🧠 Project Overview
+## Project Overview
 
 This project analyzes customer and transaction data from a U.S.-based apparel & accessories retailer to understand profitability and customer satisfaction across four store locations in the Boston metro area. It spans data modeling, cleaning, manipulation, hypothesis testing, and regression modeling to guide data-driven business decisions.
 
 ---
 
-## 🧱 Part 1: Data Engineering & Exploratory Analysis
+##  Part 1: Data Engineering & Exploratory Analysis
 
-### 📌 1. Data Modeling
+###  1. Data Modeling
 - Created an **Entity Relationship Diagram (ERD)** linking `customers`, `sales`, and `stores` using primary/foreign keys.
 - **Key Fields:**
   - `customer_id` (PK in customers, FK in sales)
   - `store_id` (PK in stores, FK in sales)
   - `product_category`, `price_category`, `gross_margin`
 
-### 🧹 2. Data Inspection & Cleaning
+###  2. Data Inspection & Cleaning
 - **Categorical Fixes:** Standardized inconsistent labels in gender, state, and satisfaction scores per data dictionary.
 - **Numerical Fixes:** Imputed missing income & age values; removed extreme sale.amount outliers using boxplot/z-score thresholds.
 
-### 🔄 3. Data Wrangling
+###  3. Data Wrangling
 - Created `customer_purchases.csv` summarizing number of items and average sale price per customer.
 - Joined transaction-level and customer-level data to form a unified analysis-ready `customer_purchases` dataframe.
 
-### 📊 4. Visualization & Descriptive Stats
+###  4. Visualization & Descriptive Stats
 - Calculated mean, median, std dev, and skewness of sale amounts.
 - Created **boxplots** to explore distribution by product category and to identify outliers.
 - Computed **blended gross margin** per category:
