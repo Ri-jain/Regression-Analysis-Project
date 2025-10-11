@@ -53,12 +53,3 @@ This project analyzes customer and transaction data from a U.S.-based apparel & 
 
 ---
 
-## Tableau Dashboard (Coming Soon)
-Will include:
-- Store-wise gross margin trend
-- Category-level profitability
-- Customer satisfaction & purchase behavior segmentation
-
-6. Regression analysis. 
-
-Build a regression model to predict gross.margin using any other data that is available to you. Because of the high inherent variability in the outcome measure, achieving an R2 of ~0.15 or higher is considered useful to the firm. However, the model should also provide interpretable results, e.g., information about which variables most affect gross.margin in a positive or negative direction.
