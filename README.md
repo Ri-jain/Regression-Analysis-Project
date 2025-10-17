@@ -46,7 +46,7 @@ This project analyzes customer and transaction data from a U.S.-based apparel & 
 ###  Regression Analysis
 - Built a **multiple linear regression model** to predict `gross_margin` using:
   - `product_category`, `price_category`, `store_id`, `sale.amount`, `month`
-- Achieved **R² ≈ 0.18**, offering predictive utility and interpretability.
+    
 - **Key Drivers Identified:**
   - Price category had a negative relationship with margin (discounted items)
   - Store ID showed variation in margin performance, revealing operational inefficiencies
